@@ -1,0 +1,590 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <title>ISRO</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      background-color: black;
+      color: white;
+      font-family: Arial, sans-serif;
+    }
+#desktopBanner {
+  background-color: #0f0f0f;
+  color: #00ffcc;
+  text-align: center;
+  padding: 12px;
+  font-size: 1rem;
+  font-family: 'Courier New', Courier, monospace;
+  letter-spacing: 1px;
+  font-weight: bold;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 10000;
+  box-shadow: 0 0 10px #00ffcc;
+}
+
+   section {
+  min-height: 100vh;      /* at least viewport height */
+  position: relative;
+  padding-bottom: 100px;  /* space for bottom buttons */
+  box-sizing: border-box;
+}
+
+    .bg-image {
+      background-image: url("Desktop - 2 (2).svg");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+
+    /* Optional heading styling */
+    .heading {
+      margin: 20px;
+      padding: 10px;
+      text-align: center;
+    }
+
+    /* Button positioned bottom-left */
+    .bottom-left-button {
+  position: absolute;
+  bottom: 140px;
+  left: 190px;
+  width: 220px;
+  height: 50px;
+  font-size: 1.4rem;
+  border: none;
+  background-color: #4a4a4aba;
+  color: white;
+  cursor: pointer;
+  box-shadow: 0px 4px 12px rgba(255, 165, 0, 0.7);
+  border-radius: 0px !important;  /* ✅ no roundness */
+  appearance: none;              /* ✅ removes default styles */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+
+    .bottom-left-button:hover {
+      box-shadow: 0px 6px 18px rgba(255, 140, 0, 0.9);
+    }
+
+        #uploadSection {
+      display: none; /* hidden by default */
+      background-color: #000000;
+      /* justify-content: center; */
+      /* align-items: center; */
+    }
+
+    #uploadSection button {
+   
+  position: absolute;
+  top: 20px;
+  left: 190px;
+  width: 220px;
+  height: 50px;
+  font-size: 1.4rem;
+  border: none;
+  background-color: #4a4a4aba;
+  color: white;
+  cursor: pointer;
+  box-shadow: 0px 4px 12px rgba(255, 165, 0, 0.7);
+  border-radius: 0px !important;  /* ✅ no roundness */
+  appearance: none;              /* ✅ removes default styles */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+    }
+
+    #uploadSection button:hover {
+      
+  box-shadow: 0px 6px 18px rgba(255, 140, 0, 0.9);
+    }
+
+#actionButtons {
+  position: absolute;
+  bottom: 60px;
+  left: 190px;
+  width: 800px; /* or whatever width needed */
+  height: 50px;
+}
+
+#actionButtons button {
+  position: absolute;
+  border-radius: 0 !important;
+  border: none;
+  background-color: #4a4a4aba;
+  color: white;
+  cursor: pointer;
+  font-size: 1.2rem;
+  box-shadow: 0px 4px 12px rgba(255, 165, 0, 0.7);
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  height: 50px;
+  width: 200px;
+  margin:30px;
+}
+#actionButtons button:hover{
+  box-shadow: 0px 6px 18px rgba(255, 140, 0, 0.9);
+}
+
+
+#actionButtons button:first-child {
+  left: 190;
+}
+
+#actionButtons button:last-child {
+  left: 850px;
+}
+
+
+#uploadSection {
+  display: none;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+  width: 100%;
+}
+
+/* #uploadSection button {
+  padding: 12px 24px;
+  font-size: 1.2rem;
+  background-color: #ff6600;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 6px;
+} */
+
+#imageDialog {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #222;
+  padding: 30px;
+  border-radius: 10px;
+  z-index: 9999;
+  box-shadow: 0 0 20px rgba(255, 165, 0, 0.8);
+  text-align: center;
+}
+
+#imageDialog img {
+  width: 220px;
+  height: auto;
+  margin-top: 20px;
+  cursor: pointer;
+  border: 2px solid #fff;
+  transition: transform 0.3s ease;
+}
+
+#imageDialog img:hover {
+  transform: scale(1.05);
+}
+
+#resultSection {
+  display: none;
+  width: 100%;
+  padding: 40px;
+  text-align: center;
+}
+
+#comparison {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 30px;
+  text-align: center;
+}
+
+
+#comparison img {
+  width: 280px;
+  border: 2px solid #fff;
+}
+
+#comparison h3 {
+  margin-bottom: 10px;
+}
+
+#zoomModal {
+  display: none;
+  position: fixed;
+  z-index: 9999;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  justify-content: center;
+  align-items: center;
+}
+
+#zoomModal img {
+  width: auto;
+  height: auto;
+  max-width: none;
+  max-height: none;
+  transform: scale(1.8); /* Adjust zoom level here */
+  transition: transform 0.3s ease;
+  box-shadow: 0 0 20px white;
+  border-radius: 8px;
+  cursor: zoom-out;
+}
+
+
+.loaderText {
+  font-size: 1.6rem;
+  color: orange;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.loaderDots {
+  display: inline-block;
+  width: 60px;
+  text-align: center;
+}
+
+.loaderDots::after {
+  content: ' .';
+  animation: dots 1.2s steps(4, end) infinite;
+  font-size: 2rem;
+  color: orange;
+}
+
+@keyframes dots {
+  0%, 20% { content: ' .'; }
+  40% { content: ' ..'; }
+  60% { content: ' ...'; }
+  80%, 100% { content: ' .'; }
+}
+
+/* Compact Table Styles */
+.table-container {
+  margin-top: 30px;
+  overflow-x: auto;
+}
+
+.compact-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #111;
+  color: white;
+  font-family: Arial, sans-serif;
+  font-size: 0.9rem;
+}
+
+.compact-table th,
+.compact-table td {
+  padding: 6px 10px;
+  border: 1px solid #333;
+  text-align: left;
+}
+
+.compact-table thead {
+  background-color: #222;
+  color: #f90;
+}
+
+
+.astro {
+  position: relative;
+  width: 100%;
+  height: 250px; /* give it some height */
+}
+
+.astro-bottom-left {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  width: 140px;
+  height:140px;
+  opacity: 0.5;
+  transition: 0.3s;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.astro-top-right {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 140px;
+  height:140px;
+  opacity: 0.5;
+  transition: 0.3s;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.astro-bottom-left:hover,
+.astro-top-right:hover {
+  opacity: 1;
+  transform: scale(1.05);
+  z-index: 10;
+}
+
+
+.pulsing-glow {
+  box-shadow: 0 0 10px rgba(255, 165, 0, 0.8);
+  animation: pulseGlow 2s infinite;
+  z-index: 10;
+}
+
+@keyframes pulseGlow {
+  0% {
+    box-shadow: 0 0 10px rgba(255, 165, 0, 0.8);
+  }
+  50% {
+    box-shadow: 0 0 25px rgba(255, 165, 0, 1);
+  }
+  100% {
+    box-shadow: 0 0 10px rgba(255, 165, 0, 0.8);
+  }
+}
+
+  </style>
+</head>
+<body>
+<div id="desktopBanner">
+  ⚠️ <strong> <bold>Optimized for desktop view only</bold></strong> <br>This is a prototype made for ISRO Hackathon'25  — core algorithms are not implemented.
+</div>
+
+  <!-- First Section with Image -->
+  <section>
+    <img src="Desktop - 1.svg" alt="ISRO 1" style="width: 100%; height: 100%; object-fit: cover;">
+  </section>
+
+  <!-- <div class="heading">
+    <h1>AI-Powered Analysis of the Moon’s Surface</h1>
+  </div> -->
+
+  <!-- Section with Background Image -->
+  <section class="bg-image">
+    <button class="bottom-left-button"  onclick="showUpload()">Click to analyze ..</button>
+  </section>
+
+
+<!-- Add inside <body> -->
+<section id="uploadSection">
+  <button onclick="openDialog()">Upload Document</button>
+  
+  <!-- Loading and Result Section -->
+<div id="resultSection" style="display:none; padding: 40px; text-align:center;">
+  <div id="loadingContainer">
+  <p id="loadingText" class="loaderText">Analyzing</p>
+  <div class="loaderDots"></div>
+</div>
+
+ <div id="comparison" style="display: none; flex-direction: column; align-items: center; margin-top: 30px; text-align: center;">
+  <h2>Comparison Result</h2>
+  <div style="display: flex; justify-content: center; gap: 60px; flex-wrap: wrap; margin-top: 20px;">
+    <div class="zoom-container">
+      <h3>Before</h3>
+      <img src="image 3 (2).png" alt="Image 1" onclick="zoomImage('image 3 (2).png')" style="width: 500px;">
+    </div>
+    <div class="zoom-container">
+      <h3>After</h3>
+      <img src="image 2.svg" alt="Image 2" onclick="zoomImage('image 2.svg')" style="width: 500px;">
+    </div>
+  </div>
+  <!-- <div class="astro"> -->
+    <img src="promo1.png" alt="astro1" class="astro-bottom-left" class="pulsing-glow">
+  <img src="promo2.png" alt="astro2" class="astro-top-right"  class="pulsing-glow">
+  <!-- </div> -->
+  <div class="table-container">
+  <h3>Expected Output</h3>
+  <table class="compact-table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Type</th>
+        <th>Coords</th>
+        <th>Box</th>
+        <th>Area</th>
+        <th>Conf.</th>
+        <th>Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td><td>Boulder</td><td>(780, 290)</td><td>(780, 290, 850, 350)</td>
+        <td>0.34 km²</td><td>94%</td><td>Isolated, shadow</td>
+      </tr>
+      <tr>
+        <td>2</td><td>Boulder</td><td>(930, 360)</td><td>(930, 360, 990, 420)</td>
+        <td>0.28 km²</td><td>91%</td><td>Crater rim</td>
+      </tr>
+      <tr>
+        <td>3</td><td>Landslide</td><td>(510, 250)</td><td>(510, 250, 570, 300)</td>
+        <td>0.62 km²</td><td>87%</td><td>Disruption visible</td>
+      </tr>
+      <tr>
+        <td>4</td><td>Landslide</td><td>(250, 200)</td><td>(250, 200, 320, 270)</td>
+        <td>0.50 km²</td><td>89%</td><td>Slope collapse region</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<!-- Buttons inside comparison -->
+<div id="actionButtons">
+  <button onclick="downloadReport()">
+    ⬇️ Download Report
+  </button>
+
+  <button onclick="window.open('https://qgis.org/', '_blank')">
+    🌍 QGIS Visualization
+  </button>
+</div>
+
+
+
+</div>
+
+
+
+  <div id="zoomModal" onclick="closeZoom()">
+  <img id="zoomedImage" src="" alt="Zoomed Image">
+</div>
+
+</div>
+</section>
+<footer style="background-color: #222; color: #eee; padding: 20px 10px; text-align: center; font-size: 14px;">
+  <div style="max-width: 1200px; margin: 0 auto;">
+    <p>© 2025 Ninja_Naari. All rights reserved. This is just a prototype.</p>
+    
+    <p style="margin-top: 10px;">
+      <strong>Team Members:</strong><br>
+      Aarti Parulkar, Sakshi Patil, Vibhasha Nagvekar, Zaineb Patel
+    </p>
+
+    <p style="margin-top: 10px;">
+      <strong>Contact:</strong> <a href="mailto:28sakshipatil@gmail.com" style="color: #ffa500; text-decoration: none;">ninjanaari.team</a>
+    </p>
+  </div>
+</footer>
+
+
+<!-- Modal Dialog -->
+<div id="imageDialog" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
+     background:#222; padding:20px; border-radius:8px; z-index:9999; box-shadow:0 0 20px orange; text-align:center;">
+  <h2>Select Image</h2>
+  <img src="image 3 (2).png" alt="Image 1" style="width:600px; height:auto; cursor:pointer;" onclick="startAnalysis()" />
+  <button id="uploadBtn" onclick="uploadFromComputer()">Upload from Computer</button>
+</div>
+
+
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script> -->
+<script>
+async function downloadReport() {
+  const comparison = document.getElementById("comparison");
+
+  if (!comparison || getComputedStyle(comparison).display === "none") {
+    alert("Please run the analysis first!");
+    return;
+  }
+
+  // Scroll to top and wait for layout
+  window.scrollTo({ top: 0 });
+  await new Promise(resolve => setTimeout(resolve, 300));
+
+  // Use html2canvas to capture the section
+  html2canvas(comparison, { useCORS: true, scale: 2 }).then(canvas => {
+    const imgData = canvas.toDataURL("image/png");
+
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF('p', 'mm', 'a4');
+
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
+
+    const imgWidth = pageWidth * 1;
+    const imgHeight = canvas.height * imgWidth / canvas.width;
+
+    // Add time and title
+    pdf.setFont("helvetica", "bold");
+    pdf.setFontSize(16);
+    pdf.text("ISRO Moon Surface Report", 10, 15);
+    pdf.setFontSize(10);
+    pdf.text(`Generated on: ${new Date().toLocaleString()}`, 10, 22);
+
+    // Add image (starting lower so text doesn't overlap)
+    pdf.addImage(imgData, 'PNG', 0, 30, imgWidth, imgHeight);
+
+    // Save
+    pdf.save("ISRO_Comparison_Report.pdf");
+  });
+}
+</script>
+
+
+
+
+<script>
+  function zoomImage(src) {
+    const modal = document.getElementById('zoomModal');
+    const zoomedImg = document.getElementById('zoomedImage');
+    zoomedImg.src = src;
+    modal.style.display = "flex";
+  }
+
+  function closeZoom() {
+    document.getElementById('zoomModal').style.display = "none";
+  }
+</script>
+
+  <script>
+  function showUpload() {
+    document.getElementById("uploadSection").style.display = "flex";
+    window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+  }
+
+  function openDialog() {
+    document.getElementById("imageDialog").style.display = "block";
+  }
+
+function startAnalysis() {
+  document.getElementById("imageDialog").style.display = "none";
+  document.getElementById("resultSection").style.display = "block";
+  document.getElementById("loadingContainer").style.display = "block";
+  document.getElementById("comparison").style.display = "none";
+
+  const loadingText = document.getElementById("loadingText");
+
+  // Step-by-step transition
+  setTimeout(() => {
+    loadingText.innerText = "Detecting";
+  }, 1500);
+
+  setTimeout(() => {
+    loadingText.innerText = "On your way";
+  }, 3000);
+
+ setTimeout(() => {
+  document.getElementById("loadingContainer").style.display = "none";
+  document.getElementById("comparison").style.display = "flex";
+  document.getElementById("actionButtons").style.display = "flex"; // ✅ show buttons now
+}, 4500);
+
+}
+
+</script>
+
+</body>
+</html>
